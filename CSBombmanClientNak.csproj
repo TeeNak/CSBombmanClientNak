@@ -44,15 +44,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ActionData.cs" />
-    <Compile Include="Block.cs" />
-    <Compile Include="Bomb.cs" />
-    <Compile Include="Item.cs" />
-    <Compile Include="MapData.cs" />
-    <Compile Include="MoveAndBomb.cs" />
-    <Compile Include="MoveDecider.cs" />
-    <Compile Include="Player.cs" />
-    <Compile Include="Position.cs" />
+    <Compile Include="ModelExternal\ActionData.cs" />
+    <Compile Include="ModelExternal\Block.cs" />
+    <Compile Include="ModelExternal\Bomb.cs" />
+    <Compile Include="Consts.cs" />
+    <Compile Include="ModelExternal\Item.cs" />
+    <Compile Include="ModelExternal\MapData.cs" />
+    <Compile Include="Action.cs" />
+    <Compile Include="ActionDecider.cs" />
+    <Compile Include="ModelInternal\InternalMapData.cs" />
+    <Compile Include="ModelExternal\Player.cs" />
+    <Compile Include="ModelExternal\Position.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils.cs" />

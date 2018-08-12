@@ -8,7 +8,7 @@ namespace CSBombmanClientNak
 {
 	public enum MOVE { UP, DOWN, LEFT, RIGHT, STAY };
 
-	public class MoveAndBomb
+	public class Action
 	{
 		public MOVE Move { get; set; }
 		public bool Bomb { get; set; }
