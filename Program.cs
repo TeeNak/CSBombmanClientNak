@@ -38,43 +38,37 @@ namespace CSBombmanClientNak
 
 		static void Main(string[] args)
 		{
-			using (var logFile = new StreamWriter(@".\log.txt"))
+
+			try
 			{
+				Console.InputEncoding = Encoding.UTF8;
+				Console.OutputEncoding = Encoding.UTF8;
+				Console.WriteLine(Consts.MyName, Console.OutputEncoding.CodePage);
+				//標準入力
+				//WaitForDebuggerAttach();
 
-				try
+				var sPos = Console.ReadLine();
+				int position = Convert.ToInt32(sPos);
+
+				var moveDecider = new ActionDecider();
+
+				while (true)
 				{
-					Console.InputEncoding = Encoding.UTF8;
-					Console.OutputEncoding = Encoding.UTF8;
-					Console.WriteLine(Consts.MyName, Console.OutputEncoding.CodePage);
-					//標準入力
-					//WaitForDebuggerAttach();
+					var s = Console.ReadLine();
 
-					var sPos = Console.ReadLine();
-					int position = Convert.ToInt32(sPos);
+					var map = Utils.JsonToObject<MapData>(s);
 
-					var moveDecider = new ActionDecider();
+					var internalMap = new InternalMapData(map); 
+					Action m = moveDecider.NextMove(internalMap);
 
-					while (true)
-					{
-						var s = Console.ReadLine();
-
-						var map = Utils.JsonToObject<MapData>(s);
-
-						var internalMap = new InternalMapData(map); 
-						Action m = moveDecider.NextMove(internalMap);
-
-						Console.WriteLine(m.ToCommandString());
-						logFile.WriteLine(m.ToCommandString());
-						logFile.Flush();
-						logger.Debug(m.ToCommandString());
-					}
+					Console.WriteLine(m.ToCommandString());
+					logger.Debug(m.ToCommandString());
 				}
-				catch (Exception e)
-				{
-					Console.WriteLine(e);
-					logFile.WriteLine(e);
-					logFile.Flush();
-				}
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e);
+				logger.Debug(e);
 			}
 		}
 

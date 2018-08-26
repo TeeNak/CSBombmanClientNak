@@ -8,11 +8,12 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>CSBombmanClientNak</RootNamespace>
     <AssemblyName>CSBombmanClientNak</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -60,6 +61,8 @@
     <Compile Include="ModelExternal\MapData.cs" />
     <Compile Include="Action.cs" />
     <Compile Include="ActionDecider.cs" />
+    <Compile Include="ModelInternal\Cell.cs" />
+    <Compile Include="ModelInternal\CellDict.cs" />
     <Compile Include="ModelInternal\InternalMapData.cs" />
     <Compile Include="ModelExternal\Player.cs" />
     <Compile Include="ModelExternal\Position.cs" />

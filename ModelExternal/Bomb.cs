@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,7 +24,15 @@ namespace CSBombmanServer
             this.owner = owner;
         }
 
-        [JsonConstructor]
+		public Bomb(Position pos, int power)
+		{
+			this.pos = pos; // pos ha immutable
+			this.power = power;
+			this.timer = EXPLODE_TIMER;
+			this.owner = null;
+		}
+
+		[JsonConstructor]
         public Bomb(Position pos, int timer, int power)
         {
             this.pos = pos; // pos ha immutable
