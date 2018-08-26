@@ -24,6 +24,8 @@ namespace CSBombmanClientNak
 
 	class Program
 	{
+		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
 		static void WaitForDebuggerAttach()
 		{
 		//	Console.WriteLine("Waiting for debugger to attach");
@@ -36,7 +38,6 @@ namespace CSBombmanClientNak
 
 		static void Main(string[] args)
 		{
-
 			using (var logFile = new StreamWriter(@".\log.txt"))
 			{
 
@@ -65,6 +66,7 @@ namespace CSBombmanClientNak
 						Console.WriteLine(m.ToCommandString());
 						logFile.WriteLine(m.ToCommandString());
 						logFile.Flush();
+						logger.Debug(m.ToCommandString());
 					}
 				}
 				catch (Exception e)
