@@ -48,7 +48,7 @@ namespace CSBombmanClientNak.ModelInternal
 		{
 
 			var cell = this[pos];
-			if (cell.Wall || cell.Block || cell.Fire || cell.Bomb != null)
+			if (cell.Wall || cell.Block || cell.Fire || cell.Bomb != null || (cell.ToBeFire && distance == 1))
 			{
 				return;
 			}
@@ -92,6 +92,7 @@ namespace CSBombmanClientNak.ModelInternal
 			var path = new Stack<MOVE>();
 			SetDistanceInner(pos, path, 0);
 		}
+
 
 		public IEnumerable<MOVE> PathToPosition(Position pos)
 		{

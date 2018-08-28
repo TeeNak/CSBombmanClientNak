@@ -88,31 +88,22 @@ namespace CSBombmanClientNak
 				logger.Debug("not in danger");
 
 				var placeToSetBombs = map.PlaceToSetBomb().ToList();
-				if(placeToSetBombs.Count() == 0)
-				{
-					result.Move = ChooseRandomMove(availableMoves.ToList());
-					result.Bomb = false;
-					return result;
-				}
 
-				var placeToSetBomb = placeToSetBombs.FirstOrDefault();
-
-				if (placeToSetBomb != null)
+				foreach( var placeToSetBomb in placeToSetBombs)
 				{
 					if (placeToSetBomb == p.pos)
 					{
-						map.AddBomb(new Bomb(p));
+						var tempBomb = new Bomb(p);
+						map.AddBomb(tempBomb);
 
 						Position nearestSafePos = map.FindNearestSafePlace();
+
+						map.RemoveBomb(tempBomb);
+
 						if (nearestSafePos == null)
 						{
-							// 死んだ。やけくそ移動
-
-							logger.Debug("I am dying.");
-
-							result.Move = ChooseRandomMove(availableMoves.ToList());
-							result.Bomb = false;
-							return result;
+							// 置くと安全な場所がない
+							continue;
 						}
 
 						var pathToSafePlace = map.PathToPosition(nearestSafePos);
@@ -125,14 +116,37 @@ namespace CSBombmanClientNak
 					{
 						var pathToPlaceBomb = map.PathToPosition(placeToSetBomb);
 
-						result.Move = pathToPlaceBomb.FirstOrDefault();
+						var move = pathToPlaceBomb.FirstOrDefault();
+
+						if(map.IsInDanger(p.pos.PositionAfterMove(move)))
+						{
+							// 次の場所へ
+							continue;
+						}
+
+						result.Move = move;
 						result.Bomb = false;
 						return result;
 
 					}
 				}
 
-				result.Move = ChooseRandomMove(availableMoves.ToList());
+				var safeMoves = availableMoves.Where(move =>
+				{
+					return !map.IsInDanger(p.pos.PositionAfterMove(move));
+				});
+
+				if (safeMoves.Count() == 0)
+				{
+					// やけくそ
+					logger.Debug("I am dying 2.");
+					result.Move = availableMoves.First();
+					result.Bomb = false;
+					return result;
+				}
+
+
+				result.Move = ChooseRandomMove(safeMoves.ToList());
 				result.Bomb = false;
 				return result;
 			}

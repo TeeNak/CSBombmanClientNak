@@ -58,11 +58,12 @@ namespace CSBombmanClientNak.ModelInternal
 
 			logger.Debug($"MinX: {MinX}, SizeX: {SizeX}, MinY {MinY}, SizeY {SizeY}");
 
+
 			var ary2 = Enumerable.Range(MinY, SizeY).Select(y =>
 			{
 				return Enumerable.Range(MinX, SizeX).Select(x =>
 				{
-					var cell =new Cell()
+					var cell = new Cell()
 					{
 						X = x,
 						Y = y,
@@ -81,8 +82,24 @@ namespace CSBombmanClientNak.ModelInternal
 
 			CellDict = new CellDict(ary2, MinX, SizeX, MinY, SizeY);
 
+			SetAboutToFire();
+
 			CellDict.SetDistance(Me.pos);
+
 			CellDict.Log();
+		}
+
+		private void SetAboutToFire()
+		{
+			var aboutToExplode = Bombs.Where(b => b.timer == 1);
+			foreach (var bomb in aboutToExplode)
+			{
+				var area = PosAffectedIncludingCausingExplosion(bomb);
+				foreach (var pos in area)
+				{
+					CellDict[pos].ToBeFire = true;
+				}
+			}
 		}
 
 		public IEnumerable<MOVE> PathToPosition(Position pos)
@@ -135,6 +152,7 @@ namespace CSBombmanClientNak.ModelInternal
 		{
 			var ret = CellDict
 				.Where(kv => kv.Value.Distance != Cell.UNREACHABLE)
+				.OrderBy(kv => kv.Value.Distance)
 				.Select(kv => kv.Key);
 			return ret;
 		}
@@ -145,7 +163,7 @@ namespace CSBombmanClientNak.ModelInternal
 			return affected.Any(p => CellDict[p].Block);
 		}
 
-		IEnumerable<Position> PosAffectedIncludingCausingExplosionInner(IEnumerable<Position> posBySingleExplosion, List<(Bomb, bool)> bps)
+		IEnumerable<Position> PosAffectedIncludingCausingExplosionInner(IEnumerable<Position> posBySingleExplosion, Dictionary<Position, bool> bps)
 		{
 			logger.Debug("---------- PosAffectedIncludingCausingExplosionInner start-----------");
 			var ret = new HashSet<Position>();
@@ -154,22 +172,23 @@ namespace CSBombmanClientNak.ModelInternal
 				var bomb = CellDict[pos].Bomb;
 				if (bomb != null)
 				{
-					var tuple = bps.FirstOrDefault(bp => bp.Item1.pos.x == bomb.pos.x && bp.Item1.pos.y == bomb.pos.y);
-					if(tuple.Item1 != null)
+					
+					if(bps.ContainsKey(bomb.pos))
 					{
-						logger.Debug($"bomb {tuple.Item1.ToString()}");
 
-						if (tuple.Item2)
+						logger.Debug($"bomb {bomb.ToString()}");
+
+						if (bps[bomb.pos])
 						{
 							// already processed
 							break;
 						}
 
-						tuple.Item2 = true;
+						bps[bomb.pos] = true;
 
-						var byItem1 = CellDict.PosAffectedBySingleBomb(tuple.Item1);
-						var affectedByItem1 = PosAffectedIncludingCausingExplosionInner(byItem1, bps);
-						foreach (var posByItem1 in affectedByItem1)
+						var bySingleBomb = CellDict.PosAffectedBySingleBomb(bomb);
+						var affectedByBomb = PosAffectedIncludingCausingExplosionInner(bySingleBomb, bps);
+						foreach (var posByItem1 in affectedByBomb)
 						{
 							ret.Add(posByItem1);
 						}
@@ -185,19 +204,24 @@ namespace CSBombmanClientNak.ModelInternal
 		IEnumerable<Position> PosAffectedIncludingCausingExplosion(Bomb bomb)
 		{
 			logger.Debug("---------- PosAffectedIncludingCausingExplosion start-----------");
-
-			var bps = Bombs.Select( b => (b, false)).ToList(); // (bomb, processed)
-
+			
+			//誘爆の計算が遅くて0.5秒を超える
+			/*
+			var bps = Bombs
+				.Select( b => new KeyValuePair<Position, bool>(b.pos, false))
+				.ToDictionary(kv => kv.Key, kv => kv.Value); // (bomb, processed)
+			*/
 			var posBySingleExplosion = CellDict.PosAffectedBySingleBomb(bomb);
-
-			var tuple = bps.FirstOrDefault(bp => bp.Item1.pos.x == bomb.pos.x && bp.Item1.pos.y == bomb.pos.y);
-			if (tuple.Item1 != null)
+			/*
+			if(bps.ContainsKey(bomb.pos))
 			{
-				tuple.Item2 = true; // processed
+				bps[bomb.pos] = true;
 			}
 
 			var pos = PosAffectedIncludingCausingExplosionInner(posBySingleExplosion, bps);
+			*/
 
+			var pos = posBySingleExplosion;
 			logger.Debug("---------- PosAffectedIncludingCausingExplosion end -----------");
 			return pos;
 		}
@@ -210,7 +234,7 @@ namespace CSBombmanClientNak.ModelInternal
 			{
 				var bomb = new Bomb(pos, Me.power);
 				return IsThereBlockWithinAffectedArea(bomb);
-			});
+			}).Take(3);
 
 			logger.Debug("---------- BreakableWhenBombPut -----------");
 			foreach (var r in ret)
@@ -269,7 +293,7 @@ namespace CSBombmanClientNak.ModelInternal
 		{
 			var breakables = BreakableWhenBombPut();
 
-			var ret = breakables.Where(pos =>
+			var ret = breakables.Take(3).Where(pos =>
 			{
 				return IsSafeToPutBomb(pos, Me.power);
 			}).ToList();
@@ -302,6 +326,7 @@ namespace CSBombmanClientNak.ModelInternal
 
 			var p = CellDict
 				.Where(kv => kv.Value.Distance == minDist)
+				.Where(kv => !IsInDanger(kv.Key))
 				.Select(kv => kv.Key)
 				.First();
 
@@ -315,5 +340,12 @@ namespace CSBombmanClientNak.ModelInternal
 			Bombs.Add(bomb);
 			CellDict[bomb.pos].Bomb = bomb;
 		}
+
+		public void RemoveBomb(Bomb bomb)
+		{
+			Bombs.Remove(bomb);
+			CellDict[bomb.pos].Bomb = null;
+		}
+
 	}
 }

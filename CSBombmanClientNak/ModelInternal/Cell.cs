@@ -30,6 +30,8 @@ namespace CSBombmanClientNak.ModelInternal
 
 		public bool Fire { get; set; }
 
+		public bool ToBeFire { get; set; } = false;
+
 		public int Distance { get; set; } = UNREACHABLE;
 
 		public List<MOVE> Path { get; set; }

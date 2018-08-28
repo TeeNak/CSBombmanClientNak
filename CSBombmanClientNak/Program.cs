@@ -45,6 +45,7 @@ namespace CSBombmanClientNak
 
 			try
 			{
+
 				Console.InputEncoding = Encoding.UTF8;
 				Console.OutputEncoding = Encoding.UTF8;
 				Console.WriteLine(Consts.MyName, Console.OutputEncoding.CodePage);
@@ -58,11 +59,24 @@ namespace CSBombmanClientNak
 
 				while (true)
 				{
+					logger.Debug("**************************");
+
 					var s = Console.ReadLine();
 
-					logger.Debug("**************************");
+					Stopwatch stopWatch = new Stopwatch();
+					stopWatch.Start();
+
 					logger.Debug("--- input ----------------");
-					logger.Debug(s);
+					if(s == null)
+					{
+						logger.Debug("null");
+					}
+					else
+					{
+						logger.Debug($"length {s.Length}");
+						logger.Debug(s);
+					}
+					logger.Factory.Flush();
 					logger.Debug("--------------------------");
 
 					var map = Utils.JsonToObject<MapData>(s);
@@ -70,14 +84,19 @@ namespace CSBombmanClientNak
 					var internalMap = new InternalMapData(map);
 					Action m = moveDecider.NextMove(internalMap);
 
+					stopWatch.Stop();
+					TimeSpan ts = stopWatch.Elapsed;
+
 					Console.WriteLine(m.ToCommandString());
 					logger.Debug(m.ToCommandString());
+					logger.Debug(ts.ToString());
 				}
 			}
 			catch (Exception e)
 			{
-				Console.WriteLine(e);
 				logger.Debug(e);
+				logger.Factory.Flush();
+				Console.WriteLine(e);
 			}
 		}
 

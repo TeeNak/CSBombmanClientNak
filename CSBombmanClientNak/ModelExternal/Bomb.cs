@@ -37,7 +37,7 @@ namespace CSBombmanServer
         {
             this.pos = pos; // pos ha immutable
             this.power = power;
-            this.timer = EXPLODE_TIMER;
+            this.timer = timer;
             this.owner = null;
         }
 
