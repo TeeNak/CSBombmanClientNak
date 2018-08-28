@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace CSBombmanClientNak
 {
 
-	class ActionDecider
+	public class ActionDecider
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -26,6 +26,8 @@ namespace CSBombmanClientNak
 
 		public Action NextMove(InternalMapData map)
 		{
+			logger.Debug("*** NextMove start *************");
+
 			var result = new Action();
 
 			var p = map.Players.Find(player => player.Name.Contains(Consts.MyName));
@@ -95,26 +97,44 @@ namespace CSBombmanClientNak
 
 				var placeToSetBomb = placeToSetBombs.FirstOrDefault();
 
-				if(placeToSetBomb == p.pos)
+				if (placeToSetBomb != null)
 				{
-					map.AddBomb(new Bomb(p));
+					if (placeToSetBomb == p.pos)
+					{
+						map.AddBomb(new Bomb(p));
 
-					Position nearestSafePos = map.FindNearestSafePlace();
-					var pathToSafePlace = map.PathToPosition(nearestSafePos);
+						Position nearestSafePos = map.FindNearestSafePlace();
+						if (nearestSafePos == null)
+						{
+							// 死んだ。やけくそ移動
 
-					result.Move = pathToSafePlace.FirstOrDefault();
-					result.Bomb = true;
-					return result;
+							logger.Debug("I am dying.");
+
+							result.Move = ChooseRandomMove(availableMoves.ToList());
+							result.Bomb = false;
+							return result;
+						}
+
+						var pathToSafePlace = map.PathToPosition(nearestSafePos);
+
+						result.Move = pathToSafePlace.FirstOrDefault();
+						result.Bomb = true;
+						return result;
+					}
+					else
+					{
+						var pathToPlaceBomb = map.PathToPosition(placeToSetBomb);
+
+						result.Move = pathToPlaceBomb.FirstOrDefault();
+						result.Bomb = false;
+						return result;
+
+					}
 				}
-				else
-				{
-					var pathToPlaceBomb = map.PathToPosition(placeToSetBomb);
 
-					result.Move = pathToPlaceBomb.FirstOrDefault();
-					result.Bomb = false;
-					return result;
-
-				}
+				result.Move = ChooseRandomMove(availableMoves.ToList());
+				result.Bomb = false;
+				return result;
 			}
 
 
