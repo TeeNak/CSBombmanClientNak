@@ -84,9 +84,21 @@ namespace CSBombmanClientNak.ModelInternal
 
 			SetAboutToFire();
 
+			SetFallingWall();
+
 			CellDict.SetDistance(Me.pos);
 
 			CellDict.Log();
+		}
+
+		private void SetFallingWall()
+		{
+			int i = Turn - 359;
+			if (i >= 0 && i < Utils.FALLING_WALL.Length)
+			{
+				Position p = new Position(Utils.FALLING_WALL[i][0], Utils.FALLING_WALL[i][1]);
+				Walls.Add(p);
+			}
 		}
 
 		private void SetAboutToFire()

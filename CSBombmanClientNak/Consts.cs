@@ -9,5 +9,7 @@ namespace CSBombmanClientNak
 	class Consts
 	{
 		public const string MyName = "泰";
+
+
 	}
 }

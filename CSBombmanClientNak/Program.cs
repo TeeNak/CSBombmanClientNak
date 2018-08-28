@@ -61,21 +61,30 @@ namespace CSBombmanClientNak
 				{
 					logger.Debug("**************************");
 
-					var s = Console.ReadLine();
+					string s = null;
+
+					var retry = 0;
+					while(s == null)
+					{
+						s = Console.ReadLine();
+						if(s == null)
+						{
+							if (retry >= 10)
+							{
+								logger.Debug("input is null!! exit.");
+								return;
+							}
+							logger.Debug("input is null!! retry.");
+						}
+						retry++;
+					}
 
 					Stopwatch stopWatch = new Stopwatch();
 					stopWatch.Start();
 
 					logger.Debug("--- input ----------------");
-					if(s == null)
-					{
-						logger.Debug("null");
-					}
-					else
-					{
-						logger.Debug($"length {s.Length}");
-						logger.Debug(s);
-					}
+					logger.Debug($"length {s.Length}");
+					logger.Debug(s);
 					logger.Factory.Flush();
 					logger.Debug("--------------------------");
 
