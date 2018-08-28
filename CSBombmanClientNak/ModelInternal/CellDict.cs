@@ -116,7 +116,11 @@ namespace CSBombmanClientNak.ModelInternal
 				}
 
 				var newPos = new Position(inPos.x - i, inPos.y);
-				if(this[newPos].Block)
+				if (this[newPos].Wall)
+				{
+					break;
+				}
+				else if (this[newPos].Block)
 				{
 					//このセルのみ影響、以降は影響しない
 					yield return newPos;
@@ -134,7 +138,11 @@ namespace CSBombmanClientNak.ModelInternal
 				}
 
 				var newPos = new Position(inPos.x + i, inPos.y);
-				if (this[newPos].Block)
+				if (this[newPos].Wall)
+				{
+					break;
+				}
+				else if (this[newPos].Block)
 				{
 					//このセルのみ影響、以降は影響しない
 					yield return newPos;
@@ -152,7 +160,11 @@ namespace CSBombmanClientNak.ModelInternal
 				}
 
 				var newPos = new Position(inPos.x, inPos.y - i);
-				if (this[newPos].Block)
+				if (this[newPos].Wall)
+				{
+					break;
+				}
+				else if (this[newPos].Block)
 				{
 					//このセルのみ影響、以降は影響しない
 					yield return newPos;
@@ -169,7 +181,11 @@ namespace CSBombmanClientNak.ModelInternal
 					break;
 				}
 				var newPos = new Position(inPos.x, inPos.y + i);
-				if (this[newPos].Block)
+				if (this[newPos].Wall)
+				{
+					break;
+				}
+				else if (this[newPos].Block)
 				{
 					//このセルのみ影響、以降は影響しない
 					yield return newPos;

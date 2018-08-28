@@ -240,7 +240,7 @@ namespace CSBombmanClientNak.ModelInternal
 
 		IEnumerable<Position> BreakableWhenBombPut()
 		{
-			var reachables = ReachablePosistions();
+			var reachables = ReachablePosistions().Take(10);
 
 			var ret = reachables.Where(pos => 
 			{

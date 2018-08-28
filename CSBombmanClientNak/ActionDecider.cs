@@ -22,6 +22,14 @@ namespace CSBombmanClientNak
 			return possible[i];
 		}
 
+		static bool TryRandomPlaceBomb()
+		{
+			var rand = new Random();
+
+			int i = rand.Next(0, 10);
+
+			return i == 0;
+		}
 
 
 		public Action NextMove(InternalMapData map)
@@ -145,6 +153,28 @@ namespace CSBombmanClientNak
 					return result;
 				}
 
+				if(TryRandomPlaceBomb())
+				{
+					var tempBomb = new Bomb(p);
+					map.AddBomb(tempBomb);
+
+					Position nearestSafePos = map.FindNearestSafePlace();
+
+					map.RemoveBomb(tempBomb);
+
+					if (nearestSafePos == null)
+					{
+						// 置くと安全な場所がない
+					}
+					else
+					{
+						var pathToSafePlace = map.PathToPosition(nearestSafePos);
+
+						result.Move = pathToSafePlace.FirstOrDefault();
+						result.Bomb = true;
+						return result;
+					}
+				}
 
 				result.Move = ChooseRandomMove(safeMoves.ToList());
 				result.Bomb = false;
