@@ -35,10 +35,6 @@ namespace CSBombmanClientNak
 		}
 
 
-		public static (string, int) Example()
-		{
-			return ("aaa", 1);
-		}
 
 		static void Main(string[] args)
 		{

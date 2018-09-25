@@ -132,19 +132,19 @@ namespace CSBombmanClientNak.ModelInternal
 
 			var threats = Bombs.Select((b) =>
 			{
-				if (pos.x - b.pos.x == 0 && pos.y - b.pos.y <= b.power)
+				if (pos.x - b.pos.x == 0 && Math.Abs(pos.y - b.pos.y) <= b.power)
 				{
 					return new Threat { ThreatLevel = ThreatLevel.Danger, Direction = Direction.North };
 				}
-				else if (pos.x - b.pos.x == 0 && b.pos.y - pos.y <= b.power)
+				else if (pos.x - b.pos.x == 0 && Math.Abs(b.pos.y - pos.y) <= b.power)
 				{
 					return new Threat { ThreatLevel = ThreatLevel.Danger, Direction = Direction.South };
 				}
-				else if (pos.y - b.pos.y == 0 && pos.x - b.pos.x <= b.power)
+				else if (pos.y - b.pos.y == 0 && Math.Abs(pos.x - b.pos.x) <= b.power)
 				{
 					return new Threat { ThreatLevel = ThreatLevel.Danger, Direction = Direction.West };
 				}
-				else if (pos.y - b.pos.y == 0 && b.pos.x - pos.x <= b.power)
+				else if (pos.y - b.pos.y == 0 && Math.Abs(b.pos.x - pos.x) <= b.power)
 				{
 					return new Threat { ThreatLevel = ThreatLevel.Danger, Direction = Direction.East };
 				}

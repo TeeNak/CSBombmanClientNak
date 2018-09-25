@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using CSBombmanClientNak;
 using System;
 using System.Collections.Generic;
@@ -14,8 +14,7 @@ namespace CSBombmanClientNak.Tests
         [TestMethod()]
         public void ExampleTest()
         {
-            var s = Program.Example();
-            Assert.AreEqual("aaa", s.Item1);
+            Assert.AreEqual("aaa", "aaa");
         }
     }
 }
